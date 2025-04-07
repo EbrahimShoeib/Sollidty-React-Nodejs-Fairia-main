@@ -65,33 +65,46 @@ const TenderAppProvider = ({ children }) => {
     }
 }
 
-  const createTender = async (from, title, description, bidBond, prequalificationDeadline, bidSubmissionDeadline, contractSignDeadline, estimatedProjectCost, keyword)=> {
-    if (ethereum) {
-      const tenderAppContract = getEthereumContract();
-
-      await tenderAppContract.createTender(
+    const createTender = async (
         from,
         title,
         description,
         bidBond,
+        applicationFee,
         prequalificationDeadline,
         bidSubmissionDeadline,
         contractSignDeadline,
         estimatedProjectCost,
         keyword,
-      ).then((tenders) => {
-
-
-        
-      }).catch(async (error)=> {
-        const errorData = new Error()
-        const errorMessage = error.reason ? error.reason : "An error occurred. Please try again later.";
-
-        alert(errorMessage)
-        throw errorData
-      });
-  }
-  }
+        officialContactEmail
+    ) => {
+        if (ethereum) {
+            const tenderAppContract = getEthereumContract();
+            try {
+                // Call the updated createTender with the new parameters
+                const transaction = await tenderAppContract.createTender(
+                    from,
+                    title,
+                    description,
+                    bidBond,
+                    applicationFee,
+                    prequalificationDeadline,
+                    bidSubmissionDeadline,
+                    contractSignDeadline,
+                    estimatedProjectCost,
+                    keyword,
+                    officialContactEmail
+                );
+                // Wait for the transaction to be mined
+                await transaction.wait();
+                console.log("Tender created successfully");
+            } catch (error) {
+                const errorMessage = error.reason ? error.reason : "An error occurred. Please try again later.";
+                alert(errorMessage);
+                throw error;
+            }
+        }
+    };
 
   const getTenderById = async (id)=> {
 
@@ -104,7 +117,7 @@ const TenderAppProvider = ({ children }) => {
     }
   }
 
-  const applyToTender = async (tenderIndex,  form,  title,  description,ContactEmail,Submiission)=> {
+  const applyToTender = async (tenderIndex,  form,  title,  description)=> {
 
     if (ethereum) {
 
@@ -115,8 +128,6 @@ const TenderAppProvider = ({ children }) => {
             form,
             title,
             description,
-            ContactEmail,
-            Submiission
         )
 
     }

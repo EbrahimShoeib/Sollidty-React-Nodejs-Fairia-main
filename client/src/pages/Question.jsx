@@ -1,142 +1,101 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import questions from "../data/Qustitions";
 import { TenderAppContext } from "../context/TenderAppContext";
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ethers } from "ethers";
 
 const QuestionForm = () => {
-  const [selectedAnswer, setSelectedAnswer] = useState([]);
-  const [selectedAnswerOne, setSelectedAnswerOne] = useState("");
-  const [selectedAnswerTwo, setSelectedAnswerTwo] = useState("");
+  const [selectedAnswer, setSelectedAnswer] = useState(Array(53).fill("1"));
+  const [selectedAnswerOne, setSelectedAnswerOne] = useState(""); // ✅ Fix: Black text + Visible Input
+  const [selectedAnswerTwo, setSelectedAnswerTwo] = useState(""); // ✅ Fix: Black text + Visible Input
 
   const { completeApplication } = useContext(TenderAppContext);
-
-  useEffect(() => {
-    for (let i = 0; i <= 52; i++) {
-      selectedAnswer[i] = "1";
-    }
-  }, []);
-
-  const handleOptionChange = (questionId, value) => {
-    selectedAnswer[questionId] = value;
-    setSelectedAnswer(selectedAnswer);
-  };
-
   let { id } = useParams();
 
-  const handleSubmit = () => {
-    event.preventDefault(); // Prevent the default form submission behavior
-    console.log("clicked");
-    completeApplication(
-      id,
-      selectedAnswer.map((awnser, index) => {
-        return ethers.BigNumber.from(awnser);
-      })
-    )
-      .then((value) => {
-        console.log("value  ", value);
-      })
-      .catch((error) => {
-        const errorMessage = error.reason
-          ? error.reason
-          : "An error occurred. Please try again later.";
-        alert(errorMessage);
-      });
-
-    console.log(selectedAnswer);
+  const handleOptionChange = (questionId, value) => {
+    const updatedAnswers = [...selectedAnswer];
+    updatedAnswers[questionId] = value;
+    setSelectedAnswer(updatedAnswers);
   };
 
-  const getScore = () => {
-    let score = 0;
-    questions.forEach((question) => {
-      if (selectedAnswer[question.id] + question.value) {
-        score++;
-      }
-    });
-    return score;
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    completeApplication(
+        id,
+        selectedAnswer.map((answer) => ethers.BigNumber.from(answer))
+    )
+        .then(() => alert("Application submitted successfully!"))
+        .catch((error) => alert(error.reason || "An error occurred. Please try again later."));
   };
 
   return (
-    <div>
-      <div className="bg-white text-xl pt-28 ">
-        <p className="flex justify-center text-7xl pb-20  text-sky-700">
-        Questions
-        </p>
-        {questions.map((question) => (
-          <div className="  pl-40" style={{ width: "100%" }} key={question.id}>
-            <p className="text-black text-md">
-              {" "}
-              {question.id} - {question.question}
-            </p>
-            {question.options.map((option) => (
-              <div
-                className=" flex  mb-4 pl-6 pt-2 text-sky-800 "
-                key={option.value}
-              >
-                <div>
-                  <input
-                    type="radio"
-                    name={`question-${question.id}`}
-                    value={option.value}
-                    // checked={selectedAnswer?.[question.id] === option.value}
-                    onChange={() =>
-                      handleOptionChange(question.id, option.value)
-                    }
-                  />
-                  <label className="pl-3">{option.label}</label>
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12">
+        {/* Page Title */}
+        <h1 className="text-4xl font-bold text-sky-700 mb-8">Tender Questions</h1>
+
+        {/* Questions Section */}
+        <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-8">
+          {questions.map((question) => (
+              <div key={question.id} className="mb-6">
+                <p className="text-lg font-medium text-gray-800">{question.id}. {question.question}</p>
+                <div className="mt-3 space-y-2">
+                  {question.options.map((option) => (
+                      <label key={option.value} className="flex items-center space-x-3 bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200 transition">
+                        <input
+                            type="radio"
+                            name={`question-${question.id}`}
+                            value={option.value}
+                            className="form-radio text-sky-500 focus:ring-sky-400"
+                            onChange={() => handleOptionChange(question.id, option.value)}
+                        />
+                        <span className="text-gray-700">{option.label}</span>
+                      </label>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        ))}
-        <div>
-          <div className="flex pb-9 text-black ">
-            <label className="  text-black pl-40 ">
-              52- Could you provide the proposed price for this project?
-            </label>
-            <input
-              value={selectedAnswerOne}
-              // checked={selectedAnswer?.[question.id] === option.value}
-              onChange={(event) =>
-                setSelectedAnswerOne(
-                  console.log(event.target.value),
-                  event.target.value
-                )
-              }
-              type="text"
-              className="bg-white ml-5 border border-sky-700 rounded-md pl-3"
-            />
+          ))}
+
+          {/* Additional Questions with Fixed Input */}
+          <div className="mt-6 space-y-4">
+            <div>
+              <label className="block text-lg font-medium text-gray-800">
+                52. Proposed price for this project:
+              </label>
+              <input
+                  type="number"
+                  value={selectedAnswerOne}
+                  onChange={(event) => setSelectedAnswerOne(event.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition text-black" // ✅ Fix: Added text-black
+                  placeholder="Enter proposed price"
+              />
+            </div>
+
+            <div>
+              <label className="block text-lg font-medium text-gray-800">
+                53. Expected NPV for this project:
+              </label>
+              <input
+                  type="number"
+                  value={selectedAnswerTwo}
+                  onChange={(event) => setSelectedAnswerTwo(event.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition text-black" // ✅ Fix: Added text-black
+                  placeholder="Enter expected NPV"
+              />
+            </div>
           </div>
 
-          <div className="flex pb-9 text-black ">
-            <label className="  text-black pl-40 ">
-              53- Could you provide the expected NPV for this project? 
-            </label>
-            <input
-              value={selectedAnswerTwo}
-              // checked={selectedAnswer?.[question.id] === option.value}
-              onChange={(event) =>
-                setSelectedAnswerTwo(
-                  console.log(event.target.value),
-                  event.target.value
-                )
-              }
-              type="text"
-              className="bg-white ml-5 border border-sky-700 rounded-md pl-3"
-            />
+          {/* Submit Button */}
+          <div className="mt-8 flex justify-center">
+            <button
+                onClick={handleSubmit}
+                className="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition-all duration-200"
+            >
+              Submit Application
+            </button>
           </div>
         </div>
-        <div className=" flex justify-center items-center pt-24 pb-60  ">
-          <Link
-            className=" flex justify-center items-center bg-sky-70 p-1 text-lg  w-40 h-10 rounded-xl  text-black hover:bg-sky-800 hover:text-black"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Link>
-        </div>
       </div>
-    </div>
   );
 };
 

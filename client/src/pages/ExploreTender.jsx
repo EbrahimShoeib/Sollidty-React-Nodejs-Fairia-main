@@ -1,48 +1,51 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useContext ,  useEffect, useState } from "react";// eslint-disable-next-line no-unused-vars
-import NavBar from "../components/NavBar";
-import Card from "../components/ExploreCard";
+import React, { useContext, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
-import {TenderAppContext} from"../context/TenderAppContext"
-// import SingleCard from "../components/SingleTender";
+import ExploreCard from "../components/ExploreCard";
+import { TenderAppContext } from "../context/TenderAppContext";
 
 function ExploreTender() {
-  const {
-    getAllTenders,tenders,setTenders
-  } = useContext(TenderAppContext);
+  const { getAllTenders, tenders, setTenders } = useContext(TenderAppContext);
 
-  useEffect( () => {
+  useEffect(() => {
     getAllTenders()
-    .then((tenders)=> {
-      setTenders(tenders)
-      console.log(tenders.le)
-    }).catch((error)=> {
-      const errorMessage = error.reason ? error.reason : "An error occurred. Please try again later.";
-
-      alert(errorMessage)   
-    })
-    
+        .then((tenders) => {
+          setTenders(tenders);
+        })
+        .catch((error) => {
+          alert(error.reason || "An error occurred. Please try again later.");
+        });
   }, []);
 
-
-
   return (
-    <div className="text-slate-950 bg-white">
-      <div style={{fontSize:"80px"}}>
-          <p className="text-slate-950 font-semibold flex justify-center bg-white py-10"> Explore<span className="text-sky-400 px-3">Tender</span> </p>
+      <div className="min-h-screen bg-gray-100 py-12 px-6">
+        {/* Page Title */}
+        <h1 className="text-4xl font-bold text-sky-700 text-center mb-8">
+          Explore <span className="text-sky-400">Tenders</span>
+        </h1>
+
+        {/* Search Bar */}
+        <div className="flex justify-center mb-10">
+          <SearchBar />
         </div>
-      <SearchBar />
-        <div
-          className="flex flex-wrap justify-around w-70% m-21"
 
-          style={{ padding: "10px",width:"80%",marginLeft:"10%"}}
-        >
-
-        {tenders.map((tender, index) => (
-              <Card  key={index} title= {tender.title} description = {tender.description} id = {tender.id} bidBond = {tender.bidBond}/>
-        ))}
+        {/* Tenders List */}
+        {tenders.length === 0 ? (
+            <p className="text-center text-gray-500 text-lg">No tenders available at the moment.</p>
+        ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tenders.map((tender, index) => (
+                  <ExploreCard
+                      key={index}
+                      title={tender.title}
+                      description={tender.description}
+                      id={tender.id}
+                      bidBond={tender.bidBond}
+                  />
+              ))}
+            </div>
+        )}
       </div>
-    </div>
   );
 }
 

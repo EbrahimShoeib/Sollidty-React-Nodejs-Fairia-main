@@ -1,42 +1,40 @@
-
-
-function ApplicantCard({ 
-  applicant,
-  form,
-  title,
-  description,
-  totalScore
-}) {
-
-   
-  return (
-    <>
-      <div className="flex flex-wrap  max-w-2xl ml-44 mt-20 bg-secon p-5 bg-white rounded-2xl">
-        <div className="relative w-10 h-10 overflow-hidden bg-white rounded-full dark:bg-gray-200">
+function ApplicantCard({
+                           applicant,
+                           form,
+                           title,
+                           description,
+                           totalScore
+                       }) {
+    return (
+        <div className="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
+            {/* Card Header */}
+            <div className="flex items-center bg-gradient-to-r from-sky-500 to-blue-600 p-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
                     <img
-                      src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
-                      className=" relative z-10 rounded-3xl"
-                      alt=""
+                        src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+                        alt="Applicant Avatar"
+                        className="w-full h-full object-cover"
                     />
-        </div>
-            <div
-            style={{width:"100%"}}>
-            <div className=" pl-10">
-                <p className="pb-1 text-gray-600"> {applicant}</p>
-
-                <h2 className="pb-1 text-white text-xl tex"> {form} </h2>
+                </div>
+                <div className="ml-4">
+                    <h2 className="text-white font-semibold text-lg">{form}</h2>
+                    <p className="text-gray-200 text-sm">{applicant}</p>
+                </div>
             </div>
-           <div className=" pt-4 pl-10 ">
-           <h1 className="pb-1 text-white"> {title} </h1>
-             <p className=" text-gray-400"> {description} </p>
-             <div className="text-sky-900 mr-1 text-sm font-semibold rounded-xl bg-white flex p-5 mt-8 ">
-             Total Score <span className="text-white pl-3"> {totalScore} </span>
-                      </div>
-           </div>
+
+            {/* Card Body */}
+            <div className="p-6">
+                <h3 className="text-gray-900 font-semibold text-xl mb-2">{title}</h3>
+                <p className="text-gray-600">{description}</p>
+            </div>
+
+            {/* Card Footer */}
+            <div className="bg-gray-100 p-4 flex justify-between items-center">
+                <span className="text-gray-700 font-medium">Total Score:</span>
+                <span className="text-xl font-bold text-blue-600">{totalScore}</span>
+            </div>
         </div>
-      </div>
-    </>
-  );
+    );
 }
 
 export default ApplicantCard;

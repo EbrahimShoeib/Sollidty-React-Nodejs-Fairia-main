@@ -6,7 +6,7 @@ pragma solidity 0.8.24;
 contract TenderApp {
 
     event Announce();
-    
+
     struct Applicants {
         // uint256 id; // Unique identifier for the tender
         uint256 tenderId; // Unique identifier for the tender
@@ -20,17 +20,18 @@ contract TenderApp {
 
     struct Tender {
         uint256 id; // Unique identifier for the tender
-
         address auther;
         string from;
         string title;
         string description;
         uint256 bidBond;
+        uint256 applicationFee; // NEW: Application Fee
         uint256 prequalificationDeadline;
         uint256 bidSubmissionDeadline;
         uint256 contractSignDeadline;
         uint256 estimatedProjectCost;
         string keyword;
+        string officialContactEmail; // NEW: Official Contact Email
         uint256 timestamp;
     }
 
@@ -119,13 +120,14 @@ contract TenderApp {
         string memory title,
         string memory description,
         uint256 bidBond,
-        uint256 prequalificationDeadline, 
-        uint256 bidSubmissionDeadline, 
-        uint256 contractSignDeadline, 
-        uint256 estimatedProjectCost, 
-        string memory keyword
+        uint256 applicationFee,
+        uint256 prequalificationDeadline,
+        uint256 bidSubmissionDeadline,
+        uint256 contractSignDeadline,
+        uint256 estimatedProjectCost,
+        string memory keyword,
+        string memory officialContactEmail
     ) public {
-
         tenders.push(Tender(
             latestIndex,
             msg.sender,
@@ -133,21 +135,30 @@ contract TenderApp {
             title,
             description,
             bidBond,
+            applicationFee,
             prequalificationDeadline,
             bidSubmissionDeadline,
             contractSignDeadline,
             estimatedProjectCost,
             keyword,
+            officialContactEmail,
             block.timestamp
         ));
         emit Announce();
-        // Update the latest index
-        latestIndex = latestIndex + 1;
+        latestIndex++;
     }
 
-    function applyToTender(uint256 tenderIndex, string memory form, string memory title, string memory description) public {
+    function applyToTender(
+        uint256 tenderIndex,
+        string memory form,
+        string memory title,
+        string memory description
+    ) public payable {
         require(tenderIndex < tenders.length, "Invalid tender index");
-       
+
+        Tender memory selectedTender = tenders[tenderIndex];
+
+        require(msg.value == selectedTender.bidBond, "Incorrect bid bond amount");
 
         // Check if the user has already applied to this tender
         for (uint256 i = 0; i < applicants.length; i++) {
@@ -165,8 +176,6 @@ contract TenderApp {
             false,
             0
         ));
-
-        
     }
 
     function getApplicantsByTender(uint256 tenderId) public view returns (Applicants[] memory) {
@@ -303,6 +312,6 @@ contract TenderApp {
         }
     }
 
-    
+
 }
 
