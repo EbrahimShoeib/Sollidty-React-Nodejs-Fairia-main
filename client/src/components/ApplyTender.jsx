@@ -14,6 +14,9 @@ function ApplyTender() {
   const [description, setDescription] = useState("");
   const [contactEmail, setContactEmail] = useState(""); // User input but not used in smart contract
 
+  const [showBidBondPopup, setShowBidBondPopup] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+
   useEffect(() => {
     const fetchTender = async () => {
       try {
@@ -37,6 +40,20 @@ function ApplyTender() {
       alert("Application submitted successfully!");
     } catch (error) {
       alert(error.reason || "An error occurred. Please try again later.");
+    }
+  }
+
+  async function handleBidBondPayment() {
+    try {
+      setIsPaying(true);
+      // TODO: Replace this with actual smart contract call
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
+      alert("Bid bond paid successfully!");
+      setShowBidBondPopup(false);
+    } catch (error) {
+      alert(error.reason || "Failed to pay bid bond.");
+    } finally {
+      setIsPaying(false);
     }
   }
 
@@ -81,117 +98,89 @@ function ApplyTender() {
 
                     <div className="p-6 pt-0">
                       <form onSubmit={(e) => e.preventDefault()}>
-                        {/* From Input */}
+                        {/* Form Inputs */}
                         <div className="mt-4">
-                          <div className="group relative rounded-lg border-b focus-within:border-sky-500 px-3 pb-1.5 pt-2.5">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              From
-                            </label>
-                            <input
-                                value={form}
-                                onChange={(e) => setForm(e.target.value)}
-                                type="text"
-                                placeholder="Enter tendering entity"
-                                className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
-                            />
-                          </div>
+                          <label className="text-xs font-medium text-muted-foreground">From</label>
+                          <input
+                              value={form}
+                              onChange={(e) => setForm(e.target.value)}
+                              type="text"
+                              placeholder="Enter tendering entity"
+                              className="w-full border-b p-2"
+                          />
                         </div>
 
-                        {/* Contact Email Input (User Input Only) */}
                         <div className="mt-4">
-                          <div className="group relative rounded-lg border-b focus-within:border-sky-500 px-3 pb-1.5 pt-2.5">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              Contact Email
-                            </label>
-                            <input
-                                value={contactEmail}
-                                onChange={(e) => setContactEmail(e.target.value)}
-                                type="email"
-                                placeholder="Enter your contact email"
-                                className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
-                            />
-                          </div>
+                          <label className="text-xs font-medium text-muted-foreground">Contact Email</label>
+                          <input
+                              value={contactEmail}
+                              onChange={(e) => setContactEmail(e.target.value)}
+                              type="email"
+                              placeholder="Enter your contact email"
+                              className="w-full border-b p-2"
+                          />
                         </div>
 
-                        {/* Title Input */}
                         <div className="mt-4">
-                          <div className="group relative rounded-lg border-b focus-within:border-sky-500 px-3 pb-1.5 pt-2.5">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              Title
-                            </label>
-                            <input
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                type="text"
-                                placeholder="Enter Application Title"
-                                className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
-                            />
-                          </div>
+                          <label className="text-xs font-medium text-muted-foreground">Title</label>
+                          <input
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                              type="text"
+                              placeholder="Enter Application Title"
+                              className="w-full border-b p-2"
+                          />
                         </div>
 
-                        {/* Description Input */}
                         <div className="mt-4">
-                          <div className="group relative rounded-lg border-b focus-within:border-sky-500 px-3 pb-1.5 pt-2.5">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              Description
-                            </label>
-                            <input
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                type="text"
-                                placeholder="Enter Application Description"
-                                className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
-                            />
-                          </div>
+                          <label className="text-xs font-medium text-muted-foreground">Description</label>
+                          <input
+                              value={description}
+                              onChange={(e) => setDescription(e.target.value)}
+                              type="text"
+                              placeholder="Enter Application Description"
+                              className="w-full border-b p-2"
+                          />
                         </div>
 
-                        {/* Application Fee */}
                         <div className="mt-4">
-                          <div className="group relative rounded-lg border-b focus-within:border-sky-500 px-3 pb-1.5 pt-2.5">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              Application Fee
-                            </label>
-                            <h3 className="text-lg font-semibold">
-                              {ethers.utils.formatEther(tender.applicationFee)} ETH
-                            </h3>
-                          </div>
+                          <label className="text-xs font-medium text-muted-foreground">Application Fee</label>
+                          <h3 className="text-lg font-semibold">{ethers.utils.formatEther(tender.applicationFee)} ETH</h3>
                         </div>
 
-                        {/* Official Contact Email */}
                         <div className="mt-4">
-                          <div className="group relative rounded-lg border-b focus-within:border-sky-500 px-3 pb-1.5 pt-2.5">
-                            <label className="text-xs font-medium text-muted-foreground">
-                              Official Contact Email
-                            </label>
-                            <h3 className="text-lg font-semibold">{tender.officialContactEmail}</h3>
-                          </div>
+                          <label className="text-xs font-medium text-muted-foreground">Official Contact Email</label>
+                          <h3 className="text-lg font-semibold">{tender.officialContactEmail}</h3>
                         </div>
 
-                        {/* Submission Deadlines */}
                         <div className="mt-4">
-                          <label className="text-xs font-medium text-muted-foreground">
-                            Prequalification Deadline
-                          </label>
+                          <label className="text-xs font-medium text-muted-foreground">Prequalification Deadline</label>
                           <h3 className="text-lg font-semibold">
                             {new Date(parseInt(tender.prequalificationDeadline) * 1000).toLocaleDateString()}
                           </h3>
                         </div>
 
                         <div className="mt-4">
-                          <label className="text-xs font-medium text-muted-foreground">
-                            Bid Submission Deadline
-                          </label>
+                          <label className="text-xs font-medium text-muted-foreground">Bid Submission Deadline</label>
                           <h3 className="text-lg font-semibold">
                             {new Date(parseInt(tender.bidSubmissionDeadline) * 1000).toLocaleDateString()}
                           </h3>
                         </div>
 
-                        <div className="mt-6 flex items-center justify-center">
+                        {/* Action Buttons */}
+                        <div className="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
                           <button
                               onClick={() => onSubmit()}
-                              className="bg-yellow-300 text-black font-semibold px-6 py-3 rounded-full transition-all duration-200 hover:bg-yellow-400"
+                              className="bg-yellow-300 text-black font-semibold px-6 py-3 rounded-full hover:bg-yellow-400 transition"
                           >
                             Submit Application
+                          </button>
+
+                          <button
+                              onClick={() => setShowBidBondPopup(true)}
+                              className="bg-sky-500 text-white font-semibold px-6 py-3 rounded-full hover:bg-sky-600 transition"
+                          >
+                            Pay Bid Bond
                           </button>
                         </div>
                       </form>
@@ -199,6 +188,38 @@ function ApplyTender() {
                   </div>
                 </div>
               </div>
+
+              {/* Modal */}
+              {showBidBondPopup && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-lg p-6 shadow-lg max-w-sm w-full">
+                      <h3 className="text-lg font-bold mb-2 text-gray-800">Confirm Payment</h3>
+                      <p className="text-sm mb-4 text-gray-700">
+                        Are you sure you want to pay the bid bond of{" "}
+                        <strong className="text-gray-900">
+                          {ethers.utils.formatEther(tender.applicationFee)} ETH
+                        </strong>
+                        ?
+                      </p>
+                      <div className="flex justify-end gap-3">
+                        <button
+                            onClick={() => setShowBidBondPopup(false)}
+                            className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-sm text-gray-800"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                            disabled={isPaying}
+                            onClick={handleBidBondPayment}
+                            className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white text-sm"
+                        >
+                          {isPaying ? "Paying..." : "Confirm"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+              )}
+
             </React.Fragment>
         ) : (
             <Skeleton />

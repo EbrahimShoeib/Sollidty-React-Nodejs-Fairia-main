@@ -153,12 +153,8 @@ contract TenderApp {
         string memory form,
         string memory title,
         string memory description
-    ) public payable {
+    ) public {
         require(tenderIndex < tenders.length, "Invalid tender index");
-
-        Tender memory selectedTender = tenders[tenderIndex];
-
-        require(msg.value == selectedTender.bidBond, "Incorrect bid bond amount");
 
         // Check if the user has already applied to this tender
         for (uint256 i = 0; i < applicants.length; i++) {
@@ -177,6 +173,7 @@ contract TenderApp {
             0
         ));
     }
+
 
     function getApplicantsByTender(uint256 tenderId) public view returns (Applicants[] memory) {
         // Create a dynamic array to store the matching applicants
